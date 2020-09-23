@@ -65,27 +65,91 @@ function dev_delete($table,$field,$value)
   {  
 $CI =& get_instance();
 
- if($CI->db->delete($CI->encryption->decrypt($table),array($field=>$value)))
- 	{
+<?php 
+defined('BASEPATH') OR exit('No direct script access allowed');
 
-    echo 1;
 
-  } else echo 0;
-    
+
+if ( ! function_exists('sessionExist'))
  
+{ 
+
+   function sessionExist(){
+
+         $CI =& get_instance(); 
+
+         $userId = $CI->session->userdata('userId');
+
+         if(empty($userId)){ 
+
+          redirect(base_url('login'));
+ 
+         }else{ 
+
+           return (bool)$userId;
+
+         }
+
+    }
+
+}
+
+
+function do_upload($a,$b,$c)
+		{
+
+		$CI =& get_instance();
+		$config['upload_path'] = APPPATH.'../uploads/'.$a;
+		$config['allowed_types'] = 'gif|jpg|png|pdf|zip';
+		$config['file_name'] = $b;
+		$config['overwrite'] = TRUE;
+
+		$CI->load->library('upload',$config);
+		$CI->upload->initialize($config);
+		$CI->upload->do_upload($c);
+
+				}
+
+function create_thumb($filename,$width,$height)									
+		{
+			$CI =& get_instance();
+		$config['source_image'] = APPPATH.'../uploads/user/'.$filename;
+		$config['create_thumb'] = TRUE;
+		$config['maintain_ratio'] = TRUE;
+		$config['width']         = $width;
+		$config['height']       = $height;
+
+		$CI->load->library('image_lib', $config);
+
+		$CI->image_lib->resize();									
+
+		}
 
 
 
-  }
+function dev_delete($table,$field,$value)
+
+	{  
+		$CI =& get_instance();
+
+		if($CI->db->delete($CI->encryption->decrypt($table),array($field=>$value)))
+			{
+
+			echo 1;
+
+		} else echo 0;
 
 
-  function get_all($table)
-  {
-  	$CI =& get_instance();
-  	return $CI->db->get_where($table, array('status'=>1))->result();
 	}
-	
-	function get_count($table,$field,$id)
+
+
+function get_all($table)
+	{
+		$CI =& get_instance();
+		return $CI->db->get_where($table, array('status'=>1))->result();
+		}
+				
+function get_count($table,$field,$id)
 	{
 		$CI =& get_instance();
 		$rows = $CI->db->get_where($table, array($field=>$id))->num_rows();
@@ -139,5 +203,8 @@ $CI =& get_instance();
 
 
  ?>
+
+
+
 
 
